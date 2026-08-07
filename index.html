@@ -993,7 +993,10 @@
     // and the FLIP scale divides by zero. One hidden frame over a dark backdrop is
     // imperceptible and makes first and subsequent opens behave identically.
     lbImg.style.visibility = 'hidden';
-    requestAnimationFrame(function () {
+    var played = false;
+    function play() {
+      if (played) return;
+      played = true;
       var last = lbImg.getBoundingClientRect();
       lbImg.style.visibility = '';
 
@@ -1014,7 +1017,11 @@
         { transform: 'none' }
       ], { duration: duration(), easing: EASE });
       anim.finished.catch(function () {}).then(function () { busy = false; });
-    });
+    }
+    requestAnimationFrame(play);
+    // rAF is suspended while a tab is hidden. Without this the image would stay
+    // invisible until the tab is focused again.
+    setTimeout(play, 60);
   }
 
   function close() {
@@ -1037,9 +1044,11 @@
       { transform: 'translate(' + dx + 'px,' + dy + 'px) scale(' + sx + ',' + sy + ')' }
     ], { duration: duration(), easing: EASE, fill: 'forwards' });
     anim.finished.catch(function () {}).then(finish);
+    setTimeout(finish, duration() + 120);
   }
 
   function finish() {
+    if (!dialog.open) { busy = false; return; }
     dialog.close();
     document.documentElement.style.overflow = '';
     if (origin) {
