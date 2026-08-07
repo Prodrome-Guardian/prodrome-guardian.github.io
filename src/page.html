@@ -274,6 +274,64 @@
     aspect-ratio: 654 / 1280; border-radius: 22px; border: 1px solid var(--line);
     background: var(--ground); padding: 7px; box-shadow: var(--shadow); overflow: hidden;
   }
+  /* Upgraded to a real <button> by script, so no-JS users get a plain image. */
+  button.shot-frame {
+    appearance: none; font: inherit; color: inherit; display: block; width: 100%;
+    position: relative; cursor: zoom-in;
+    transition: transform .16s ease-out, border-color .16s ease-out, box-shadow .16s ease-out;
+  }
+  button.shot-frame:hover, button.shot-frame:focus-visible {
+    transform: translateY(-3px);
+    border-color: color-mix(in srgb, var(--accent) 60%, transparent);
+    box-shadow: 0 12px 30px rgba(0,0,0,.3);
+  }
+  button.shot-frame::after {
+    content: "View"; position: absolute; right: 12px; bottom: 12px;
+    font-family: var(--font-mono); font-size: var(--f-xs);
+    text-transform: uppercase; letter-spacing: .1em; font-weight: 600;
+    padding: 4px 10px; border-radius: 999px;
+    background: var(--accent); color: var(--btn-ink);
+    opacity: 0; transform: translateY(5px); pointer-events: none;
+    transition: opacity .16s ease-out, transform .16s ease-out;
+  }
+  button.shot-frame:hover::after, button.shot-frame:focus-visible::after {
+    opacity: 1; transform: none;
+  }
+  button.shot-frame:disabled { cursor: default; }
+  button.shot-frame:disabled:hover { transform: none; border-color: var(--line); box-shadow: var(--shadow); }
+  button.shot-frame:disabled::after { content: none; }
+  /* The clicked thumbnail is hidden while its enlarged twin is on screen. */
+  button.shot-frame.is-open { visibility: hidden; }
+
+  /* ---------- lightbox ---------- */
+  .lightbox {
+    border: 0; padding: 0; margin: auto; background: transparent;
+    max-width: 100vw; max-height: 100vh; overflow: visible;
+  }
+  .lightbox::backdrop { background: rgba(6, 10, 14, .88); }
+  .lightbox-inner { margin: 0; display: grid; gap: 16px; justify-items: center; }
+  .lightbox img {
+    display: block; width: auto; height: auto;
+    max-width: 92vw; max-height: 78vh;
+    border-radius: 14px; cursor: zoom-out;
+    box-shadow: 0 30px 80px rgba(0, 0, 0, .55);
+    transform-origin: top left;
+  }
+  .lightbox figcaption {
+    font-size: var(--f-sm); color: var(--ink-2); text-align: center;
+    max-width: 56ch; text-wrap: pretty;
+  }
+  .lightbox figcaption b { display: block; color: var(--ink); font-weight: 640; font-size: var(--f-base); }
+  .lightbox-close {
+    position: fixed; top: 18px; right: 18px;
+    appearance: none; border: 1px solid var(--line);
+    background: var(--surface); color: var(--ink);
+    font-family: var(--font-mono); font-size: var(--f-xs);
+    text-transform: uppercase; letter-spacing: .1em;
+    padding: 10px 16px; border-radius: 999px; cursor: pointer;
+    transition: opacity .16s ease-out;
+  }
+  .lightbox-close:hover { opacity: .8; }
   .shot-frame img { width: 100%; height: 100%; object-fit: cover; border-radius: 16px; display: block; }
   .shot-slot {
     width: 100%; height: 100%; border-radius: 16px;
@@ -772,6 +830,14 @@
   <p class="num">Prodrome Guardian · Investigational prototype · 2026</p>
 </footer>
 
+<dialog class="lightbox" id="lightbox" aria-label="Screenshot viewer">
+  <button type="button" class="lightbox-close" id="lightbox-close">Close</button>
+  <figure class="lightbox-inner">
+    <img id="lightbox-img" alt="">
+    <figcaption id="lightbox-cap"></figcaption>
+  </figure>
+</dialog>
+
 <script>
 /* ---- Tabs: progressive enhancement. Without JS every panel stays open. ---- */
 (function () {
@@ -819,6 +885,116 @@
   select(start, false, false);
 })();
 
+/* ---- Screenshot lightbox with a FLIP transition ----
+   The enlarged image animates out of the exact rect of the thumbnail that was
+   clicked, so it reads as one object growing rather than a new screen. ---- */
+(function () {
+  var dialog = document.getElementById('lightbox');
+  if (!dialog || typeof dialog.showModal !== 'function') return;
+
+  var lbImg = document.getElementById('lightbox-img');
+  var lbCap = document.getElementById('lightbox-cap');
+  var closeBtn = document.getElementById('lightbox-close');
+  var motion = window.matchMedia('(prefers-reduced-motion: reduce)');
+  var EASE = 'cubic-bezier(.22,.68,.3,1)';
+  var origin = null;      // the button we opened from
+  var busy = false;
+
+  function duration() { return motion.matches ? 0 : 280; }
+
+  // Turn each frame that holds an image into a real button.
+  function upgrade(frame) {
+    var img = frame.querySelector('img');
+    if (!img) return;
+    var fig = frame.closest('figure');
+    var name = fig && fig.querySelector('figcaption b');
+    var btn = document.createElement('button');
+    btn.type = 'button';
+    btn.className = frame.className;
+    btn.setAttribute('aria-label', 'Enlarge screenshot: ' + (name ? name.textContent : 'app screen'));
+    btn.appendChild(img);
+    frame.replaceWith(btn);
+    btn.addEventListener('click', function () { open(btn); });
+  }
+
+  function open(btn) {
+    if (busy) return;
+    busy = true;
+    origin = btn;
+    var thumb = btn.querySelector('img');
+    if (!thumb) { busy = false; return; }   // placeholder, nothing to enlarge
+    var fig = btn.closest('figure');
+    var cap = fig && fig.querySelector('figcaption');
+
+    lbImg.src = thumb.currentSrc || thumb.src;
+    lbImg.alt = thumb.alt;
+    lbCap.innerHTML = cap ? cap.innerHTML : '';
+
+    var first = thumb.getBoundingClientRect();
+    dialog.showModal();
+    document.documentElement.style.overflow = 'hidden';
+    var last = lbImg.getBoundingClientRect();
+
+    btn.classList.add('is-open');
+
+    var dx = first.left - last.left;
+    var dy = first.top - last.top;
+    var sx = first.width / last.width;
+    var sy = first.height / last.height;
+
+    dialog.animate([{ opacity: 0 }, { opacity: 1 }],
+      { duration: duration(), easing: EASE });
+    var anim = lbImg.animate([
+      { transform: 'translate(' + dx + 'px,' + dy + 'px) scale(' + sx + ',' + sy + ')' },
+      { transform: 'none' }
+    ], { duration: duration(), easing: EASE });
+    anim.finished.catch(function () {}).then(function () { busy = false; });
+  }
+
+  function close() {
+    if (busy || !dialog.open) return;
+    busy = true;
+    var thumb = origin && origin.querySelector('img');
+    if (!thumb) { finish(); return; }
+
+    var target = thumb.getBoundingClientRect();
+    var now = lbImg.getBoundingClientRect();
+    var dx = target.left - now.left;
+    var dy = target.top - now.top;
+    var sx = target.width / now.width;
+    var sy = target.height / now.height;
+
+    dialog.animate([{ opacity: 1 }, { opacity: 0 }],
+      { duration: duration(), easing: EASE, fill: 'forwards' });
+    var anim = lbImg.animate([
+      { transform: 'none' },
+      { transform: 'translate(' + dx + 'px,' + dy + 'px) scale(' + sx + ',' + sy + ')' }
+    ], { duration: duration(), easing: EASE, fill: 'forwards' });
+    anim.finished.catch(function () {}).then(finish);
+  }
+
+  function finish() {
+    dialog.close();
+    document.documentElement.style.overflow = '';
+    if (origin) {
+      origin.classList.remove('is-open');
+      origin.focus();
+    }
+    lbImg.getAnimations().forEach(function (a) { a.cancel(); });
+    busy = false;
+  }
+
+  // Backdrop click: the event target is the dialog itself, not its contents.
+  dialog.addEventListener('click', function (e) { if (e.target === dialog) close(); });
+  lbImg.addEventListener('click', close);
+  closeBtn.addEventListener('click', close);
+  // Escape: take over so it animates out rather than snapping shut.
+  dialog.addEventListener('cancel', function (e) { e.preventDefault(); close(); });
+  window.addEventListener('resize', function () { if (dialog.open) finish(); });
+
+  Array.prototype.forEach.call(document.querySelectorAll('.shot-frame'), upgrade);
+})();
+
 /* ---- Screenshot frames: fall back to a placeholder until the PNG exists ---- */
 (function () {
   function placeholder(img) {
@@ -828,7 +1004,14 @@
     label.className = 'eyebrow';
     label.textContent = 'Capture in preparation';
     slot.appendChild(label);
-    if (img.parentNode) img.parentNode.replaceChild(slot, img);
+    var parent = img.parentNode;
+    if (!parent) return;
+    parent.replaceChild(slot, img);
+    // Nothing to enlarge, so take the frame out of the tab order.
+    if (parent.tagName === 'BUTTON') {
+      parent.disabled = true;
+      parent.removeAttribute('aria-label');
+    }
   }
   Array.prototype.forEach.call(document.querySelectorAll('.shot-frame img'), function (img) {
     if (img.complete && img.naturalWidth === 0) { placeholder(img); return; }
