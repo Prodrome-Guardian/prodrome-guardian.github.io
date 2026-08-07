@@ -675,14 +675,14 @@
       <div class="shots pair">
         <figure class="shot">
           <div class="shot-frame">
-            <img src="assets/sos-sent.jpg" width="654" height="1280" loading="lazy" decoding="async"
+            <img src="assets/sos-sent.jpg" width="654" height="1280" decoding="async"
                  alt="The emergency screen after dispatch, confirming two contacts notified and listing the snapshot sent with the alert: heart rate, oxygen saturation, blood pressure, NEWS2, brain state and captured location. A stand-down control sits at the foot of the screen.">
           </div>
           <figcaption><b>Dispatched</b>Contacts notified, with the vitals snapshot attached and a one-tap stand-down.</figcaption>
         </figure>
         <figure class="shot wide">
           <div class="shot-frame">
-            <img src="assets/sos-whatsapp.jpg" width="1080" height="797" loading="lazy" decoding="async"
+            <img src="assets/sos-whatsapp.jpg" width="1080" height="797" decoding="async"
                  alt="The message a nominated caregiver receives: patient name, heart rate, oxygen saturation, blood pressure, NEWS2 score, brain state, a map link to the patient’s location, and a request to check in.">
           </div>
           <figcaption><b>What the caregiver receives</b>The same snapshot as a plain message, with a map link.</figcaption>
@@ -922,18 +922,24 @@
     busy = true;
     origin = btn;
     var thumb = btn.querySelector('img');
-    if (!thumb) { busy = false; return; }   // placeholder, nothing to enlarge
+    // Nothing to enlarge if the capture is a placeholder or has not decoded.
+    if (!thumb || !thumb.complete || !thumb.naturalWidth) { busy = false; return; }
     var fig = btn.closest('figure');
     var cap = fig && fig.querySelector('figcaption');
 
     lbImg.src = thumb.currentSrc || thumb.src;
     lbImg.alt = thumb.alt;
+    // Intrinsic size must be set before measuring: a freshly-assigned src has no
+    // layout box in the same frame, which would make the FLIP scale divide by zero.
+    lbImg.width = thumb.naturalWidth;
+    lbImg.height = thumb.naturalHeight;
     lbCap.innerHTML = cap ? cap.innerHTML : '';
 
     var first = thumb.getBoundingClientRect();
     dialog.showModal();
     document.documentElement.style.overflow = 'hidden';
     var last = lbImg.getBoundingClientRect();
+    if (!last.width || !last.height) { busy = false; return; }   // belt and braces
 
     btn.classList.add('is-open');
 
