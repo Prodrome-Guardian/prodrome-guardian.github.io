@@ -1,4 +1,4 @@
-# Lucid Guardian — site
+# Prodrome Guardian — site
 
 Static one-page site. No build tooling, no dependencies, no framework. One HTML file.
 
@@ -53,12 +53,12 @@ Rebuild afterwards.
 ```bash
 git init
 git add .
-git commit -m "Lucid Guardian site"
-gh repo create lucid-guardian-site --public --source=. --push
+git commit -m "Prodrome Guardian site"
+gh repo create prodrome-guardian --public --source=. --push
 ```
 
 Then in the repo: **Settings → Pages → Source: Deploy from a branch → `main` / `root`**.
-Live at `https://<username>.github.io/lucid-guardian-site/` within a minute or two.
+Live at `https://<username>.github.io/prodrome-guardian/` within a minute or two.
 
 **Option B — a `/docs` folder in an existing repo.** Copy these files into `docs/` and set
 **Settings → Pages → Source: `main` / `/docs`**. Useful if you would rather not manage a second repo.
@@ -67,7 +67,7 @@ Live at `https://<username>.github.io/lucid-guardian-site/` within a minute or t
 
 Buy the domain at Cloudflare Registrar (at-cost, no renewal markup), then:
 
-1. Create a file named `CNAME` in this folder containing only the bare domain, e.g. `lucidguardian.com`
+1. Create a file named `CNAME` in this folder containing only the bare domain, e.g. `prodromeguardian.com`
 2. At your DNS provider, add `ALIAS`/`ANAME` (or four `A` records) pointing the apex at GitHub Pages,
    and a `CNAME` for `www` pointing at `<username>.github.io`
 3. In **Settings → Pages**, enter the domain and tick **Enforce HTTPS**
