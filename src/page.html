@@ -459,8 +459,9 @@
 </section>
 
 <!-- ============ SCREENSHOTS ============ -->
-<!-- ▼▼ TO ADD A SCREENSHOT: replace <div class="shot-slot">…</div> with
-     <img src="assets/dashboard.png" alt="Dashboard showing recovery score ring, brain state and vitals grid"> ▼▼ -->
+<!-- Screenshots live in assets/ as dashboard, brain, vitals, alerts, recovery (.jpg).
+     Each frame falls back to a placeholder until its file exists, so a missing
+     capture degrades quietly rather than showing a broken image. -->
 <section class="band tint">
   <div class="wrap">
     <div class="band-head">
@@ -472,35 +473,35 @@
     <div class="shots">
       <figure class="shot">
         <div class="shot-frame">
-          <img src="assets/dashboard.png" width="654" height="1280" loading="lazy" decoding="async"
+          <img src="assets/dashboard.jpg" width="654" height="1280" loading="lazy" decoding="async"
                alt="Dashboard: recovery score ring reading 80, NEWS2 badge showing 0 low risk, brain state relaxed with delta, theta, alpha, beta and gamma band percentages, and signal quality for all four channels.">
         </div>
         <figcaption><b>Dashboard</b>Recovery score, NEWS2 badge, brain state and band distribution on one screen.</figcaption>
       </figure>
       <figure class="shot">
         <div class="shot-frame">
-          <img src="assets/brain.png" width="654" height="1280" loading="lazy" decoding="async"
+          <img src="assets/brain.jpg" width="654" height="1280" loading="lazy" decoding="async"
                alt="Neuro detail: ten-second live waveform across channels O1, O2, T3 and T4, band power broken out per channel, and a twenty-four hour brain state timeline.">
         </div>
         <figcaption><b>Neuro detail</b>Live four-channel waveform, per-channel band power, 24-hour state timeline.</figcaption>
       </figure>
       <figure class="shot">
         <div class="shot-frame">
-          <img src="assets/vitals.png" width="654" height="1280" loading="lazy" decoding="async"
+          <img src="assets/vitals.jpg" width="654" height="1280" loading="lazy" decoding="async"
                alt="Vitals detail: heart rate gauge reading 75 bpm against a normal range of 60 to 100, with a five-minute trend chart and selectable tabs for SpO2, temperature, respiratory rate, blood pressure and heart rate variability.">
         </div>
         <figcaption><b>Vitals detail</b>Per-parameter gauges and trends across six vital signs.</figcaption>
       </figure>
       <figure class="shot">
         <div class="shot-frame">
-          <img src="assets/alerts.png" width="654" height="1280" loading="lazy" decoding="async"
+          <img src="assets/alerts.jpg" width="654" height="1280" loading="lazy" decoding="async"
                alt="Alerts: the four-tier escalation chain from patient to caregiver to clinician to emergency services, current tier L0 patient only, configurable threshold ranges per vital sign, and a supplemental oxygen toggle that adjusts NEWS2 scoring.">
         </div>
         <figcaption><b>Alerts</b>The escalation chain, per-parameter thresholds and named contacts per tier.</figcaption>
       </figure>
       <figure class="shot">
         <div class="shot-frame">
-          <img src="assets/recovery.png" width="654" height="1280" loading="lazy" decoding="async"
+          <img src="assets/recovery.jpg" width="654" height="1280" loading="lazy" decoding="async"
                alt="Recovery: five recovery milestones with one complete and one flagged overdue, followed by a daily check-in capturing pain, energy, sleep quality and mood.">
         </div>
         <figcaption><b>Recovery</b>Milestone tracking against the expected day, plus the daily symptom check-in.</figcaption>
