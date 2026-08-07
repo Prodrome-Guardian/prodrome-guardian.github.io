@@ -318,6 +318,60 @@
   .btn:hover { opacity: .88; transform: translateY(-1px); }
   .btn:active { transform: translateY(0); }
 
+  /* ---------- contact disclosure + form ---------- */
+  .contact { width: 100%; max-width: 560px; }
+  .contact > summary {
+    list-style: none; cursor: pointer; user-select: none;
+    display: inline-flex; align-items: center; gap: 10px;
+  }
+  .contact > summary::-webkit-details-marker { display: none; }
+  .contact > summary::after {
+    content: "+"; font-weight: 400; font-size: 1.1em; line-height: 1;
+    transition: transform .12s ease-out;
+  }
+  .contact[open] > summary::after { transform: rotate(45deg); }
+
+  .contact-form {
+    margin-top: 18px; padding: 22px;
+    border: 1px solid var(--line); border-radius: var(--r-card);
+    background: var(--ground);
+    display: grid; gap: 16px;
+  }
+  .band.tint .contact-form { background: var(--ground); }
+  .field { display: grid; gap: 6px; }
+  .field label {
+    font-family: var(--font-mono); font-size: var(--f-xs);
+    text-transform: uppercase; letter-spacing: .11em; color: var(--ink-2);
+  }
+  .field label .opt { color: var(--ink-3); letter-spacing: .06em; }
+  .field input, .field textarea {
+    font-family: var(--font-body); font-size: var(--f-base);
+    color: var(--ink); background: var(--surface);
+    border: 1px solid var(--line); border-radius: var(--r-ctl);
+    padding: 12px 14px; width: 100%; min-height: 46px;
+    transition: border-color .12s ease-out;
+  }
+  .field textarea { min-height: 108px; resize: vertical; line-height: 1.5; }
+  .field input:hover, .field textarea:hover { border-color: var(--ink-3); }
+  .field input[aria-invalid="true"], .field textarea[aria-invalid="true"] { border-color: var(--crit); }
+  .field-error { font-size: var(--f-sm); color: var(--crit); min-height: 0; }
+  .field-error:empty { display: none; }
+
+  .contact-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 14px; }
+  .contact-actions button {
+    font-family: var(--font-mono); font-size: var(--f-sm);
+    text-transform: uppercase; letter-spacing: .1em; font-weight: 600;
+    padding: 14px 24px; border: 0; border-radius: var(--r-ctl);
+    background: var(--accent); color: var(--btn-ink); cursor: pointer;
+    transition: opacity .12s ease-out;
+  }
+  .contact-actions button:hover:not(:disabled) { opacity: .88; }
+  .contact-actions button:disabled { opacity: .55; cursor: progress; }
+  .form-status { margin: 0; font-size: var(--f-sm); color: var(--ink-2); }
+  .form-status.ok { color: var(--ok); }
+  .form-status.bad { color: var(--crit); }
+  .form-note { margin: 0; font-size: var(--f-xs); color: var(--ink-3); line-height: 1.5; }
+
   /* ---------- refs / footer ---------- */
   .refs { margin: 0; padding-left: 28px; list-style: decimal; max-width: var(--prose); }
   .refs li {
@@ -417,20 +471,39 @@
 
     <div class="shots">
       <figure class="shot">
-        <div class="shot-frame"><div class="shot-slot"><span class="eyebrow">Capture in preparation</span></div></div>
-        <figcaption><b>Dashboard</b>Recovery score ring, brain state, NEWS2 badge and vitals grid on one screen.</figcaption>
+        <div class="shot-frame">
+          <img src="assets/dashboard.png" width="654" height="1280" loading="lazy" decoding="async"
+               alt="Dashboard: recovery score ring reading 80, NEWS2 badge showing 0 low risk, brain state relaxed with delta, theta, alpha, beta and gamma band percentages, and signal quality for all four channels.">
+        </div>
+        <figcaption><b>Dashboard</b>Recovery score, NEWS2 badge, brain state and band distribution on one screen.</figcaption>
       </figure>
       <figure class="shot">
-        <div class="shot-frame"><div class="shot-slot"><span class="eyebrow">Capture in preparation</span></div></div>
-        <figcaption><b>Neuro detail</b>Live waveform, band power distribution, hemispheric heatmap, sleep staging.</figcaption>
+        <div class="shot-frame">
+          <img src="assets/brain.png" width="654" height="1280" loading="lazy" decoding="async"
+               alt="Neuro detail: ten-second live waveform across channels O1, O2, T3 and T4, band power broken out per channel, and a twenty-four hour brain state timeline.">
+        </div>
+        <figcaption><b>Neuro detail</b>Live four-channel waveform, per-channel band power, 24-hour state timeline.</figcaption>
       </figure>
       <figure class="shot">
-        <div class="shot-frame"><div class="shot-slot"><span class="eyebrow">Capture in preparation</span></div></div>
-        <figcaption><b>Vitals detail</b>Per-parameter trends with the NEWS2 contribution broken out by parameter.</figcaption>
+        <div class="shot-frame">
+          <img src="assets/vitals.png" width="654" height="1280" loading="lazy" decoding="async"
+               alt="Vitals detail: heart rate gauge reading 75 bpm against a normal range of 60 to 100, with a five-minute trend chart and selectable tabs for SpO2, temperature, respiratory rate, blood pressure and heart rate variability.">
+        </div>
+        <figcaption><b>Vitals detail</b>Per-parameter gauges and trends across six vital signs.</figcaption>
       </figure>
       <figure class="shot">
-        <div class="shot-frame"><div class="shot-slot"><span class="eyebrow">Capture in preparation</span></div></div>
-        <figcaption><b>Alerts</b>Escalation history, current tier, and per-tier notification thresholds.</figcaption>
+        <div class="shot-frame">
+          <img src="assets/alerts.png" width="654" height="1280" loading="lazy" decoding="async"
+               alt="Alerts: the four-tier escalation chain from patient to caregiver to clinician to emergency services, current tier L0 patient only, configurable threshold ranges per vital sign, and a supplemental oxygen toggle that adjusts NEWS2 scoring.">
+        </div>
+        <figcaption><b>Alerts</b>The escalation chain, per-parameter thresholds and named contacts per tier.</figcaption>
+      </figure>
+      <figure class="shot">
+        <div class="shot-frame">
+          <img src="assets/recovery.png" width="654" height="1280" loading="lazy" decoding="async"
+               alt="Recovery: five recovery milestones with one complete and one flagged overdue, followed by a daily check-in capturing pain, energy, sleep quality and mood.">
+        </div>
+        <figcaption><b>Recovery</b>Milestone tracking against the expected day, plus the daily symptom check-in.</figcaption>
       </figure>
     </div>
   </div>
@@ -599,7 +672,53 @@
       <li>Full access to the raw data and the scoring logic. No part of the algorithm is hidden from you</li>
       <li>If you run a geriatric or mental health unit, we would still like the conversation. You would be shaping what comes after the first cohort rather than buying it</li>
     </ul>
-    <a class="btn" href="mailto:shenaldbr@gmail.com?subject=Prodrome%20Guardian%20pilot%20enquiry">Arrange a pilot conversation</a>
+    <!-- «EDIT» Set action to your form endpoint. See README: Contact form. -->
+    <details class="contact">
+      <summary class="btn">Arrange a pilot conversation</summary>
+
+      <form class="contact-form" id="pilot-form" method="POST"
+            action="https://formspree.io/f/REPLACE-WITH-FORM-ID" novalidate>
+        <div class="field">
+          <label for="cf-name">Your name</label>
+          <input id="cf-name" name="name" type="text" autocomplete="name" required
+                 aria-describedby="cf-name-err">
+          <p class="field-error" id="cf-name-err"></p>
+        </div>
+
+        <div class="field">
+          <label for="cf-email">Email</label>
+          <input id="cf-email" name="email" type="email" autocomplete="email" required
+                 aria-describedby="cf-email-err">
+          <p class="field-error" id="cf-email-err"></p>
+        </div>
+
+        <div class="field">
+          <label for="cf-phone">Phone <span class="opt">(optional)</span></label>
+          <input id="cf-phone" name="phone" type="tel" autocomplete="tel">
+        </div>
+
+        <div class="field">
+          <label for="cf-org">Hospital or department <span class="opt">(optional)</span></label>
+          <input id="cf-org" name="organisation" type="text" autocomplete="organization">
+        </div>
+
+        <div class="field">
+          <label for="cf-msg">Message</label>
+          <textarea id="cf-msg" name="message" required aria-describedby="cf-msg-err"></textarea>
+          <p class="field-error" id="cf-msg-err"></p>
+        </div>
+
+        <!-- Spam trap: hidden from people, tempting to bots. -->
+        <input type="text" name="_gotcha" class="sr-only" tabindex="-1" autocomplete="off" aria-hidden="true">
+
+        <div class="contact-actions">
+          <button type="submit">Send</button>
+          <p class="form-status" id="cf-status" role="status" aria-live="polite"></p>
+        </div>
+
+        <p class="form-note">Your details go to the Prodrome Guardian team so we can reply about a pilot. We do not share them, and we do not add you to a mailing list. Please keep patient information out of this form.</p>
+      </form>
+    </details>
   </div>
 </section>
 
@@ -673,6 +792,104 @@
 
   list.hidden = false;
   select(start, false, false);
+})();
+
+/* ---- Screenshot frames: fall back to a placeholder until the PNG exists ---- */
+(function () {
+  function placeholder(img) {
+    var slot = document.createElement('div');
+    slot.className = 'shot-slot';
+    var label = document.createElement('span');
+    label.className = 'eyebrow';
+    label.textContent = 'Capture in preparation';
+    slot.appendChild(label);
+    if (img.parentNode) img.parentNode.replaceChild(slot, img);
+  }
+  Array.prototype.forEach.call(document.querySelectorAll('.shot-frame img'), function (img) {
+    if (img.complete && img.naturalWidth === 0) { placeholder(img); return; }
+    img.addEventListener('error', function () { placeholder(img); });
+  });
+})();
+
+/* ---- Pilot enquiry form ---- */
+(function () {
+  var form = document.getElementById('pilot-form');
+  if (!form) return;
+  var status = document.getElementById('cf-status');
+  var button = form.querySelector('button[type="submit"]');
+
+  var RULES = [
+    { id: 'cf-name',  err: 'cf-name-err',  msg: 'Enter your name so we know who we are replying to.' },
+    { id: 'cf-email', err: 'cf-email-err', msg: 'Enter an email address we can reply to.',
+      extra: function (v) { return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v) ? '' : 'That email address is missing an @ or a domain.'; } },
+    { id: 'cf-msg',   err: 'cf-msg-err',   msg: 'Tell us briefly what you would like to discuss.' }
+  ];
+
+  function setError(field, errNode, message) {
+    if (message) {
+      field.setAttribute('aria-invalid', 'true');
+      errNode.textContent = message;
+    } else {
+      field.removeAttribute('aria-invalid');
+      errNode.textContent = '';
+    }
+    return !message;
+  }
+
+  function validate() {
+    var firstBad = null;
+    RULES.forEach(function (rule) {
+      var field = document.getElementById(rule.id);
+      var errNode = document.getElementById(rule.err);
+      var value = field.value.trim();
+      var message = value ? (rule.extra ? rule.extra(value) : '') : rule.msg;
+      if (!setError(field, errNode, message) && !firstBad) firstBad = field;
+    });
+    if (firstBad) firstBad.focus();
+    return !firstBad;
+  }
+
+  // Clear a field's error as soon as the person starts fixing it.
+  RULES.forEach(function (rule) {
+    var field = document.getElementById(rule.id);
+    field.addEventListener('input', function () {
+      if (field.getAttribute('aria-invalid') === 'true') {
+        setError(field, document.getElementById(rule.err), '');
+      }
+    });
+  });
+
+  function say(message, kind) {
+    status.textContent = message;
+    status.className = 'form-status' + (kind ? ' ' + kind : '');
+  }
+
+  form.addEventListener('submit', function (e) {
+    e.preventDefault();
+    if (!validate()) { say('Check the highlighted fields.', 'bad'); return; }
+
+    if (form.action.indexOf('REPLACE-WITH-FORM-ID') !== -1) {
+      say('This form is not connected to an endpoint yet.', 'bad');
+      return;
+    }
+
+    button.disabled = true;
+    say('Sending…');
+
+    fetch(form.action, {
+      method: 'POST',
+      body: new FormData(form),
+      headers: { Accept: 'application/json' }
+    }).then(function (res) {
+      if (!res.ok) throw new Error('bad status');
+      form.reset();
+      say('Thank you. We will reply to that address shortly.', 'ok');
+    }).catch(function () {
+      say('That did not send. Please try again in a moment.', 'bad');
+    }).then(function () {
+      button.disabled = false;
+    });
+  });
 })();
 
 /* ---- Ambient EEG trace behind the hero ---- */
