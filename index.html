@@ -790,7 +790,12 @@
       <summary class="btn">Arrange a pilot conversation</summary>
 
       <form class="contact-form" id="pilot-form" method="POST"
-            action="https://formspree.io/f/REPLACE-WITH-FORM-ID" novalidate>
+            action="https://api.web3forms.com/submit" novalidate>
+        <!-- «EDIT» Paste your Web3Forms access key here. It is public by design,
+             not a secret: it only says "deliver to this inbox". -->
+        <input type="hidden" name="access_key" value="PASTE-YOUR-ACCESS-KEY">
+        <input type="hidden" name="subject" value="Prodrome Guardian — pilot enquiry">
+        <input type="hidden" name="from_name" value="Prodrome Guardian site">
         <div class="field">
           <label for="cf-name">Your name</label>
           <input id="cf-name" name="name" type="text" autocomplete="name" required
@@ -822,7 +827,7 @@
         </div>
 
         <!-- Spam trap: hidden from people, tempting to bots. -->
-        <input type="text" name="_gotcha" class="sr-only" tabindex="-1" autocomplete="off" aria-hidden="true">
+        <input type="checkbox" name="botcheck" class="sr-only" tabindex="-1" aria-hidden="true">
 
         <div class="contact-actions">
           <button type="submit">Send</button>
@@ -1138,8 +1143,9 @@
     e.preventDefault();
     if (!validate()) { say('Check the highlighted fields.', 'bad'); return; }
 
-    if (form.action.indexOf('REPLACE-WITH-FORM-ID') !== -1) {
-      say('This form is not connected to an endpoint yet.', 'bad');
+    var key = form.querySelector('input[name="access_key"]');
+    if (!key || key.value.indexOf('PASTE-YOUR') === 0) {
+      say('This form is not connected to an inbox yet.', 'bad');
       return;
     }
 
