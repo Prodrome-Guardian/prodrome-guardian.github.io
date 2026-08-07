@@ -966,7 +966,7 @@
   }
 
   function open(btn) {
-    if (busy) return;
+    if (busy || dialog.open) return;   // showModal() throws if already open
     busy = true;
     origin = btn;
     var thumb = btn.querySelector('img');
