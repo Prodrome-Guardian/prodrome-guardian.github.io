@@ -112,21 +112,6 @@
   .hero-title { font-size: var(--f-3xl); max-width: 19ch; margin: 0; }
   .hero-title em { font-style: italic; color: var(--accent); }
   .hero-sub { max-width: 56ch; font-size: var(--f-lg); color: var(--ink-2); margin: 0; }
-  .status-row { display: flex; flex-wrap: wrap; gap: 8px; }
-  .chip {
-    font-family: var(--font-mono); font-size: var(--f-xs);
-    text-transform: uppercase; letter-spacing: .1em;
-    padding: 5px 11px; border-radius: 999px;
-    border: 1px solid var(--line); background: var(--ground);
-    color: var(--ink-2); white-space: nowrap;
-  }
-  .chip.live { color: var(--accent); border-color: color-mix(in srgb, var(--accent) 45%, transparent); }
-  .chip.live::before {
-    content: ""; display: inline-block; width: 6px; height: 6px; border-radius: 50%;
-    background: var(--accent); margin-right: 7px; vertical-align: middle;
-    animation: pulse 2.4s ease-in-out infinite;
-  }
-  @keyframes pulse { 0%,100% { opacity:1 } 50% { opacity:.25 } }
 
   .readout {
     display: grid; grid-template-columns: repeat(auto-fit, minmax(112px, 1fr));
@@ -485,13 +470,6 @@
 <header class="monitor">
   <canvas id="trace" aria-hidden="true"></canvas>
   <div class="wrap monitor-inner">
-    <div class="status-row">
-      <span class="chip live">Prodrome Guardian</span>
-      <span class="chip">Investigational prototype</span>
-      <span class="chip">Simulated data</span>
-      <span class="chip">Seeking pilot sites</span>
-    </div>
-
     <h1 class="hero-title">Outside the ICU, the brain is the <em>least monitored</em> organ in the hospital.</h1>
 
     <p class="hero-sub">Prodrome Guardian reads continuous EEG alongside vital signs and turns the two into one picture of a patient’s state, so deterioration between assessments surfaces while there is still time to act.</p>
