@@ -33,20 +33,28 @@ Three things in `_head.html` are marked `«EDIT»` and one is in the page itself
 
 ## Screenshots
 
-The page already references five files. Save them into `assets/` with these exact names:
+The page references seven captures. Save them into `assets/` with these exact names:
 
 | File | Screen |
 |---|---|
-| `assets/dashboard.png` | Recovery score, NEWS2 badge, brain state |
-| `assets/brain.png`     | Live waveform, band power, state timeline |
-| `assets/vitals.png`    | Vital gauges and trends |
-| `assets/alerts.png`    | Escalation chain, thresholds, contacts |
-| `assets/recovery.png`  | Milestones and daily check-in |
+| `assets/dashboard.jpg` | Recovery score, NEWS2 badge, brain state |
+| `assets/brain.jpg`     | Live waveform, band power, state timeline |
+| `assets/vitals.jpg`    | Vital gauges and trends |
+| `assets/alerts.jpg`    | Escalation chain, thresholds, contacts |
+| `assets/recovery.jpg`  | Milestones and daily check-in |
+
+Two more sit under the escalation ladder in the "How it works" tab:
+
+| File | Screen |
+|---|---|
+| `assets/sos-hold.jpg`     | The emergency control mid press-and-hold |
+| `assets/sos-location.jpg` | Dispatched state with GPS location attached |
 
 No markup change needed. Until a file exists the frame shows a placeholder, and it swaps to the
-real image as soon as the PNG is committed. Alt text is already written for each one.
+real image as soon as the file is committed. Alt text is already written for each one.
 
-Capture at default phone resolution; the frames are 9:19.5 and crop to fit.
+Frames are `654 / 1280` to match a default phone capture exactly, so nothing is cropped. Keep
+new captures at that size. Filenames must be lowercase: GitHub Pages serves case-sensitively.
 
 ## Contact form
 
@@ -73,20 +81,12 @@ submit button locks only while a request is in flight.
 
 ## Deploying to GitHub Pages
 
-**Option A — its own repo (recommended).**
+Already deployed. The repo is `Prodrome-Guardian/prodrome-guardian.github.io`, and because it is
+named `<org>.github.io` it serves from the org root:
 
-```bash
-git init
-git add .
-git commit -m "Prodrome Guardian site"
-gh repo create prodrome-guardian --public --source=. --push
-```
+    https://prodrome-guardian.github.io/
 
-Then in the repo: **Settings → Pages → Source: Deploy from a branch → `main` / `root`**.
-Live at `https://<username>.github.io/prodrome-guardian/` within a minute or two.
-
-**Option B — a `/docs` folder in an existing repo.** Copy these files into `docs/` and set
-**Settings → Pages → Source: `main` / `/docs`**. Useful if you would rather not manage a second repo.
+Push to `main` and Pages rebuilds in a minute or two. Nothing else to configure.
 
 ## Custom domain
 
@@ -94,7 +94,7 @@ Buy the domain at Cloudflare Registrar (at-cost, no renewal markup), then:
 
 1. Create a file named `CNAME` in this folder containing only the bare domain, e.g. `prodromeguardian.com`
 2. At your DNS provider, add `ALIAS`/`ANAME` (or four `A` records) pointing the apex at GitHub Pages,
-   and a `CNAME` for `www` pointing at `<username>.github.io`
+   and a `CNAME` for `www` pointing at `prodrome-guardian.github.io`
 3. In **Settings → Pages**, enter the domain and tick **Enforce HTTPS**
 
 The certificate takes a few minutes. Update the canonical and `og:url` to match once it resolves.
