@@ -986,23 +986,35 @@
     var first = thumb.getBoundingClientRect();
     dialog.showModal();
     document.documentElement.style.overflow = 'hidden';
-    var last = lbImg.getBoundingClientRect();
-    if (!last.width || !last.height) { busy = false; return; }   // belt and braces
-
     btn.classList.add('is-open');
 
-    var dx = first.left - last.left;
-    var dy = first.top - last.top;
-    var sx = first.width / last.width;
-    var sy = first.height / last.height;
+    // Measure one frame later, with the image hidden. On the very first open the
+    // dialog has never been laid out, so an immediate read returns a zero-size box
+    // and the FLIP scale divides by zero. One hidden frame over a dark backdrop is
+    // imperceptible and makes first and subsequent opens behave identically.
+    lbImg.style.visibility = 'hidden';
+    requestAnimationFrame(function () {
+      var last = lbImg.getBoundingClientRect();
+      lbImg.style.visibility = '';
 
-    dialog.animate([{ opacity: 0 }, { opacity: 1 }],
-      { duration: duration(), easing: EASE });
-    var anim = lbImg.animate([
-      { transform: 'translate(' + dx + 'px,' + dy + 'px) scale(' + sx + ',' + sy + ')' },
-      { transform: 'none' }
-    ], { duration: duration(), easing: EASE });
-    anim.finished.catch(function () {}).then(function () { busy = false; });
+      if (!last.width || !last.height || motion.matches) {
+        busy = false;                       // show it plainly rather than badly
+        return;
+      }
+
+      var dx = first.left - last.left;
+      var dy = first.top - last.top;
+      var sx = first.width / last.width;
+      var sy = first.height / last.height;
+
+      dialog.animate([{ opacity: 0 }, { opacity: 1 }],
+        { duration: duration(), easing: EASE });
+      var anim = lbImg.animate([
+        { transform: 'translate(' + dx + 'px,' + dy + 'px) scale(' + sx + ',' + sy + ')' },
+        { transform: 'none' }
+      ], { duration: duration(), easing: EASE });
+      anim.finished.catch(function () {}).then(function () { busy = false; });
+    });
   }
 
   function close() {
