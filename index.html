@@ -1,0 +1,820 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<!-- ══ BEFORE YOU GO LIVE, CHANGE THE THREE THINGS MARKED «EDIT» ══ -->
+
+<meta name="description" content="Lucid Guardian reads continuous EEG alongside vital signs to surface patient deterioration between assessments. An investigational prototype seeking post-surgical pilot sites.">
+
+<!-- «EDIT 1» While the site is a draft this stays noindex. Delete this line to allow search engines. -->
+<meta name="robots" content="noindex, nofollow">
+
+<!-- «EDIT 2» Set to your real URL, then uncomment. A wrong canonical is worse than none.
+<link rel="canonical" href="https://YOURDOMAIN/">
+-->
+
+<!-- Open Graph / social cards -->
+<meta property="og:type" content="website">
+<meta property="og:title" content="Lucid Guardian — continuous neuro-physiological monitoring outside the ICU">
+<meta property="og:description" content="Continuous EEG alongside vital signs, so deterioration between assessments surfaces while there is still time to act. Investigational prototype, seeking pilot sites.">
+<meta property="og:site_name" content="Lucid Guardian">
+<meta property="og:locale" content="en_GB">
+<!-- «EDIT 3» og:image and og:url must be absolute URLs. Add a 1200×630 PNG at assets/og.png, then uncomment.
+<meta property="og:url" content="https://YOURDOMAIN/">
+<meta property="og:image" content="https://YOURDOMAIN/assets/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Lucid Guardian: four-channel EEG trace above the headline “Outside the ICU, the brain is the least monitored organ in the hospital.”">
+<meta name="twitter:card" content="summary_large_image">
+-->
+
+<meta name="theme-color" content="#F4F7F6" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#0F1419" media="(prefers-color-scheme: dark)">
+
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='7' fill='%230F1419'/><path d='M3 16h4l3-7 4 14 3-9 3 5h6' fill='none' stroke='%2300D4AA' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'/></svg>">
+
+<style>
+  /* Minimal reset. The artifact host supplies one; a standalone page needs its own. */
+  *, *::before, *::after { box-sizing: border-box; }
+  html { -webkit-text-size-adjust: 100%; }
+  body, h1, h2, h3, p, figure, blockquote, dl, dd { margin: 0; }
+  ul, ol { margin: 0; padding: 0; }
+  img, canvas, svg { display: block; max-width: 100%; }
+  table { border-collapse: collapse; }
+  a { text-decoration: none; }
+  button { font: inherit; color: inherit; }
+</style>
+<title>Lucid Guardian — Continuous neuro-physiological monitoring outside the ICU</title>
+
+<style>
+  /* ---------- tokens ---------- */
+  :root {
+    --ground:   #F4F7F6;
+    --surface:  #FFFFFF;
+    --raised:   #E9EFEE;
+    --line:     rgba(15,20,25,.13);
+    --line-2:   rgba(15,20,25,.07);
+    --ink:      #10191F;
+    --ink-2:    #4A5B66;
+    --ink-3:    #5A6A73;
+    --accent:   #007F69;
+    --accent-2: #1D4ED8;
+    --warn:     #A96A00;
+    --crit:     #C42B39;
+    --ok:       #157F3C;
+    --btn-ink:  #FFFFFF;
+    --trace-a:  #007F69;
+    --trace-b:  #4FA894;
+    --trace-c:  #1D4ED8;
+    --trace-d:  #6B8FD6;
+    --shadow:   0 1px 2px rgba(15,20,25,.05), 0 8px 24px rgba(15,20,25,.06);
+
+    --font-display: "Iowan Old Style","Palatino Linotype",Charter,Cambria,Georgia,"Times New Roman",serif;
+    --font-body: -apple-system,BlinkMacSystemFont,"Segoe UI Variable Text","Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+    --font-mono: ui-monospace,"SF Mono","Cascadia Mono",Consolas,"Roboto Mono",monospace;
+
+    --f-xs:   .6875rem;
+    --f-sm:   .8125rem;
+    --f-base: 1.0625rem;
+    --f-lg:   1.1875rem;
+    --f-2xl:  2.125rem;
+    --f-3xl:  clamp(2.5rem, 6.2vw, 4.25rem);
+
+    --r-card: 12px;
+    --r-ctl:  8px;
+    --wrap:   1100px;
+    --prose:  66ch;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --ground:#0F1419; --surface:#1A2332; --raised:#243044;
+      --line:rgba(232,236,240,.12); --line-2:rgba(232,236,240,.06);
+      --ink:#E8ECF0; --ink-2:#8899AA; --ink-3:#7D8FA0;
+      --accent:#00D4AA; --accent-2:#3B82F6; --warn:#FFB020; --crit:#FF4757; --ok:#22C55E;
+      --btn-ink:#0F1419;
+      --trace-a:#00D4AA; --trace-b:#0E8E77; --trace-c:#3B82F6; --trace-d:#2A5699;
+      --shadow:0 1px 2px rgba(0,0,0,.4), 0 10px 30px rgba(0,0,0,.35);
+    }
+  }
+
+  :root[data-theme="light"] {
+    --ground:#F4F7F6; --surface:#FFFFFF; --raised:#E9EFEE;
+    --line:rgba(15,20,25,.13); --line-2:rgba(15,20,25,.07);
+    --ink:#10191F; --ink-2:#4A5B66; --ink-3:#5A6A73;
+    --accent:#007F69; --accent-2:#1D4ED8; --warn:#A96A00; --crit:#C42B39; --ok:#157F3C;
+    --btn-ink:#FFFFFF;
+    --trace-a:#007F69; --trace-b:#4FA894; --trace-c:#1D4ED8; --trace-d:#6B8FD6;
+    --shadow:0 1px 2px rgba(15,20,25,.05), 0 8px 24px rgba(15,20,25,.06);
+  }
+  :root[data-theme="dark"] {
+    --ground:#0F1419; --surface:#1A2332; --raised:#243044;
+    --line:rgba(232,236,240,.12); --line-2:rgba(232,236,240,.06);
+    --ink:#E8ECF0; --ink-2:#8899AA; --ink-3:#7D8FA0;
+    --accent:#00D4AA; --accent-2:#3B82F6; --warn:#FFB020; --crit:#FF4757; --ok:#22C55E;
+    --btn-ink:#0F1419;
+    --trace-a:#00D4AA; --trace-b:#0E8E77; --trace-c:#3B82F6; --trace-d:#2A5699;
+    --shadow:0 1px 2px rgba(0,0,0,.4), 0 10px 30px rgba(0,0,0,.35);
+  }
+
+  /* ---------- base ---------- */
+  body {
+    background: var(--ground);
+    color: var(--ink);
+    font-family: var(--font-body);
+    font-size: var(--f-base);
+    line-height: 1.62;
+    -webkit-font-smoothing: antialiased;
+  }
+  h1,h2,h3 { font-family: var(--font-display); font-weight: 600; text-wrap: balance; line-height: 1.14; letter-spacing: -.012em; }
+  p { text-wrap: pretty; }
+  a { color: inherit; }
+  strong { font-weight: 640; color: var(--ink); }
+
+  .sr-only {
+    position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px;
+    overflow: hidden; clip-path: inset(50%); white-space: nowrap; border: 0;
+  }
+
+  .wrap { width: 100%; max-width: var(--wrap); margin-inline: auto; padding-inline: 24px; }
+  .prose { max-width: var(--prose); }
+
+  .eyebrow {
+    font-family: var(--font-mono); font-size: var(--f-xs);
+    text-transform: uppercase; letter-spacing: .16em; color: var(--ink-3);
+  }
+  .num { font-variant-numeric: tabular-nums lining-nums; font-feature-settings: "tnum" 1; }
+
+  .cite {
+    font-size: .62em; font-family: var(--font-mono); color: var(--accent);
+    vertical-align: super; padding: 0 .2em; text-decoration: none; border-radius: 3px;
+  }
+  .cite:hover { text-decoration: underline; }
+
+  /* ---------- hero / monitor ---------- */
+  .monitor { position: relative; border-bottom: 1px solid var(--line); background: var(--surface); overflow: hidden; }
+  #trace { position: absolute; inset: 0; width: 100%; height: 100%; display: block; opacity: .3; }
+  .monitor-inner { position: relative; display: grid; gap: 28px; padding-block: clamp(56px, 8vw, 92px); }
+  .hero-title { font-size: var(--f-3xl); max-width: 19ch; margin: 0; }
+  .hero-title em { font-style: italic; color: var(--accent); }
+  .hero-sub { max-width: 56ch; font-size: var(--f-lg); color: var(--ink-2); margin: 0; }
+  .status-row { display: flex; flex-wrap: wrap; gap: 8px; }
+  .chip {
+    font-family: var(--font-mono); font-size: var(--f-xs);
+    text-transform: uppercase; letter-spacing: .1em;
+    padding: 5px 11px; border-radius: 999px;
+    border: 1px solid var(--line); background: var(--ground);
+    color: var(--ink-2); white-space: nowrap;
+  }
+  .chip.live { color: var(--accent); border-color: color-mix(in srgb, var(--accent) 45%, transparent); }
+  .chip.live::before {
+    content: ""; display: inline-block; width: 6px; height: 6px; border-radius: 50%;
+    background: var(--accent); margin-right: 7px; vertical-align: middle;
+    animation: pulse 2.4s ease-in-out infinite;
+  }
+  @keyframes pulse { 0%,100% { opacity:1 } 50% { opacity:.25 } }
+
+  .readout {
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(112px, 1fr));
+    gap: 1px; background: var(--line);
+    border: 1px solid var(--line); border-radius: var(--r-card); overflow: hidden;
+  }
+  .readout div { background: var(--ground); padding: 13px 16px; }
+  .readout dt {
+    font-family: var(--font-mono); font-size: var(--f-xs);
+    text-transform: uppercase; letter-spacing: .11em; color: var(--ink-3);
+  }
+  .readout dd {
+    margin: 3px 0 0; font-family: var(--font-mono); font-size: 1.3rem; font-weight: 600;
+    font-variant-numeric: tabular-nums lining-nums;
+  }
+  .readout dd span { font-size: .62em; font-weight: 400; color: var(--ink-3); margin-left: 3px; }
+  .t-accent { color: var(--accent); } .t-warn { color: var(--warn); }
+  .t-crit { color: var(--crit); } .t-ok { color: var(--ok); }
+
+  /* ---------- section rhythm ---------- */
+  .band { padding-block: clamp(44px, 6vw, 76px); border-bottom: 1px solid var(--line); }
+  .band.tint { background: var(--surface); }
+  .band-head { display: grid; gap: 12px; margin-bottom: 36px; }
+  .band-head h2 { font-size: var(--f-2xl); margin: 0; max-width: 20ch; }
+  .band-head p { margin: 0; color: var(--ink-2); max-width: var(--prose); }
+
+  @media (min-width: 900px) {
+    .band-head {
+      grid-template-columns: minmax(0, 0.88fr) minmax(0, 1.12fr);
+      column-gap: 56px; row-gap: 14px; align-items: start;
+    }
+    .band-head > .eyebrow { grid-column: 1; grid-row: 1; }
+    .band-head > h2 { grid-column: 1; grid-row: 2; max-width: none; }
+    .band-head > p { grid-column: 2; max-width: none; }
+    .band-head > p:nth-of-type(1) { grid-row: 1 / 3; }
+    .band-head > p:nth-of-type(2) { grid-row: 3; }
+  }
+
+  /* ---------- stats ---------- */
+  .stats {
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+    gap: 1px; background: var(--line);
+    border: 1px solid var(--line); border-radius: var(--r-card); overflow: hidden;
+  }
+  .stat { background: var(--ground); padding: 22px 20px; display: grid; gap: 6px; align-content: start; }
+  .band.tint .stat { background: var(--surface); }
+  .stat b {
+    font-family: var(--font-mono); font-size: 1.95rem; font-weight: 600; line-height: 1.05;
+    font-variant-numeric: tabular-nums lining-nums; color: var(--ink);
+  }
+  .stat span { font-size: var(--f-sm); color: var(--ink-2); line-height: 1.45; }
+
+  /* ---------- cards ---------- */
+  .cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(268px, 1fr)); gap: 16px; }
+  .card {
+    background: var(--surface); border: 1px solid var(--line); border-radius: var(--r-card);
+    padding: 22px; display: grid; gap: 10px; align-content: start; box-shadow: var(--shadow);
+  }
+  .card h3 { font-size: var(--f-lg); margin: 0; }
+  .card p { margin: 0; font-size: var(--f-sm); color: var(--ink-2); line-height: 1.55; }
+  .card .eyebrow { margin-bottom: 2px; }
+  .spec {
+    margin: 6px 0 0; padding: 0; list-style: none; display: grid; gap: 5px;
+    font-family: var(--font-mono); font-size: var(--f-xs); color: var(--ink-3);
+    font-variant-numeric: tabular-nums;
+  }
+  .spec li { border-top: 1px solid var(--line-2); padding-top: 5px; }
+
+  /* ---------- tabs ---------- */
+  .tablist {
+    display: flex; gap: 2px; overflow-x: auto;
+    border-bottom: 1px solid var(--line);
+    margin-bottom: 34px; padding-bottom: 0;
+    -webkit-overflow-scrolling: touch;
+  }
+  .tablist[hidden] { display: none; }
+  .tab {
+    appearance: none; background: none; border: 0; border-bottom: 2px solid transparent;
+    font-family: var(--font-mono); font-size: var(--f-sm);
+    text-transform: uppercase; letter-spacing: .1em;
+    color: var(--ink-3); padding: 15px 18px; margin-bottom: -1px;
+    cursor: pointer; white-space: nowrap;
+    transition: color .12s ease-out, border-color .12s ease-out;
+  }
+  .tab:hover { color: var(--ink-2); }
+  .tab[aria-selected="true"] { color: var(--accent); border-bottom-color: var(--accent); }
+  .tabpanel { display: grid; gap: 26px; }
+  .tabpanel[hidden] { display: none; }
+  .panel-lead { margin: 0; color: var(--ink-2); max-width: var(--prose); }
+  /* No-JS fallback: panels stack with visible titles until the script enhances them. */
+  .panel-title { font-size: var(--f-lg); margin: 0; }
+
+  /* ---------- segments ---------- */
+  .segs { display: grid; grid-template-columns: repeat(auto-fit, minmax(262px, 1fr)); gap: 16px; }
+  .seg {
+    background: var(--surface); border: 1px solid var(--line);
+    border-top: 3px solid var(--seg-color, var(--ink-3)); border-radius: var(--r-card);
+    padding: 22px; display: grid; gap: 10px; align-content: start; box-shadow: var(--shadow);
+  }
+  .seg-head { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+  .seg-head h3 { font-size: var(--f-lg); margin: 0; }
+  .seg p { margin: 0; font-size: var(--f-sm); color: var(--ink-2); line-height: 1.55; }
+  .seg .tag { flex: none; }
+  .s-now { --seg-color: var(--accent); }
+  .s-next { --seg-color: var(--accent-2); }
+  .s-exp { --seg-color: var(--ink-3); }
+
+  .principle {
+    border: 1px solid var(--line); border-left: 3px solid var(--accent);
+    border-radius: var(--r-card); background: var(--surface); padding: 24px;
+    display: grid; gap: 10px;
+  }
+  .principle h3 { font-size: var(--f-lg); margin: 0; }
+  .principle p { margin: 0; color: var(--ink-2); max-width: var(--prose); font-size: var(--f-sm); }
+
+  /* ---------- escalation ladder ---------- */
+  .ladder { display: grid; gap: 0; border: 1px solid var(--line); border-radius: var(--r-card); overflow: hidden; }
+  .rung {
+    display: grid; grid-template-columns: 62px 1fr; gap: 18px; align-items: start;
+    padding: 20px 22px; background: var(--surface);
+    border-bottom: 1px solid var(--line); border-left: 3px solid var(--rung-color, var(--ink-3));
+  }
+  .rung:last-child { border-bottom: 0; }
+  .rung-id {
+    font-family: var(--font-mono); font-size: var(--f-sm); font-weight: 600;
+    letter-spacing: .08em; color: var(--rung-color, var(--ink-3)); padding-top: 2px;
+  }
+  .rung h3 { font-size: var(--f-base); margin: 0 0 3px; font-family: var(--font-body); font-weight: 640; }
+  .rung p { margin: 0; font-size: var(--f-sm); color: var(--ink-2); }
+  .r0 { --rung-color: var(--ink-3); }
+  .r1 { --rung-color: var(--accent-2); }
+  .r2 { --rung-color: var(--warn); }
+  .r3 { --rung-color: var(--crit); }
+
+  /* ---------- screenshots ---------- */
+  .shots { display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap: 22px; }
+  .shot { display: grid; gap: 10px; margin: 0; }
+  .shot-frame {
+    aspect-ratio: 9 / 19.5; border-radius: 22px; border: 1px solid var(--line);
+    background: var(--ground); padding: 7px; box-shadow: var(--shadow); overflow: hidden;
+  }
+  .shot-frame img { width: 100%; height: 100%; object-fit: cover; border-radius: 16px; display: block; }
+  .shot-slot {
+    width: 100%; height: 100%; border-radius: 16px;
+    border: 1px dashed color-mix(in srgb, var(--ink-3) 55%, transparent);
+    background-image:
+      linear-gradient(var(--line-2) 1px, transparent 1px),
+      linear-gradient(90deg, var(--line-2) 1px, transparent 1px);
+    background-size: 22px 22px;
+    display: grid; place-content: center; text-align: center; padding: 14px;
+  }
+  .shot-slot .eyebrow { color: var(--ink-3); line-height: 1.5; }
+  .shot figcaption { font-size: var(--f-sm); color: var(--ink-2); }
+  .shot figcaption b { display: block; color: var(--ink); font-weight: 640; font-size: var(--f-base); }
+
+  /* ---------- status table ---------- */
+  .table-scroll { overflow-x: auto; border: 1px solid var(--line); border-radius: var(--r-card); }
+  table { width: 100%; border-collapse: collapse; font-size: var(--f-sm); min-width: 560px; background: var(--surface); }
+  th, td { text-align: left; padding: 13px 18px; border-bottom: 1px solid var(--line-2); vertical-align: top; }
+  th {
+    font-family: var(--font-mono); font-size: var(--f-xs); text-transform: uppercase;
+    letter-spacing: .11em; color: var(--ink-3); font-weight: 500; background: var(--raised);
+  }
+  tbody tr:last-child td { border-bottom: 0; }
+  td:first-child { font-weight: 600; color: var(--ink); width: 34%; }
+  .tag {
+    font-family: var(--font-mono); font-size: var(--f-xs); text-transform: uppercase;
+    letter-spacing: .09em; padding: 3px 8px; border-radius: var(--r-ctl);
+    white-space: nowrap; display: inline-block;
+  }
+  .tag.built { color: var(--ok); background: color-mix(in srgb, var(--ok) 14%, transparent); }
+  .tag.sim { color: var(--warn); background: color-mix(in srgb, var(--warn) 15%, transparent); }
+  .tag.next { color: var(--ink-3); background: color-mix(in srgb, var(--ink-3) 15%, transparent); }
+
+  /* ---------- CTA ---------- */
+  .cta { display: grid; gap: 22px; justify-items: start; }
+  .cta h2 { font-size: var(--f-2xl); margin: 0; max-width: 24ch; }
+  .cta p { margin: 0; color: var(--ink-2); max-width: var(--prose); }
+  .ask { display: grid; gap: 9px; margin: 0; padding: 0; list-style: none; max-width: var(--prose); }
+  .ask li { display: grid; grid-template-columns: auto 1fr; gap: 11px; font-size: var(--f-sm); color: var(--ink-2); }
+  .ask li::before { content: "→"; font-family: var(--font-mono); color: var(--accent); }
+  .btn {
+    font-family: var(--font-mono); font-size: var(--f-sm); text-transform: uppercase; letter-spacing: .1em;
+    padding: 14px 24px; border-radius: var(--r-ctl);
+    background: var(--accent); color: var(--btn-ink);
+    text-decoration: none; font-weight: 600; display: inline-block;
+    transition: transform .12s ease-out, opacity .12s ease-out;
+  }
+  .btn:hover { opacity: .88; transform: translateY(-1px); }
+  .btn:active { transform: translateY(0); }
+
+  /* ---------- refs / footer ---------- */
+  .refs { margin: 0; padding-left: 28px; list-style: decimal; max-width: var(--prose); }
+  .refs li {
+    font-size: var(--f-sm); color: var(--ink-2); line-height: 1.55;
+    scroll-margin-top: 32px; border-radius: 4px; padding: 2px 6px;
+  }
+  .refs li + li { margin-top: 10px; }
+  .refs li::marker { font-family: var(--font-mono); font-size: var(--f-xs); color: var(--accent); }
+  .refs li:target { background: color-mix(in srgb, var(--accent) 12%, transparent); }
+  .refs em { font-style: italic; }
+  .refs a { color: var(--ink-2); text-decoration: underline; text-underline-offset: 2px; text-decoration-color: var(--line); }
+  .refs a:hover { color: var(--accent); }
+
+  .legal { padding-block: 32px 52px; font-size: var(--f-sm); color: var(--ink-3); display: grid; gap: 12px; }
+  .legal p { max-width: var(--prose); }
+  .legal strong { color: var(--ink-2); }
+
+  :focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; border-radius: 4px; }
+
+  @media (prefers-reduced-motion: reduce) {
+    * { animation-duration: .001ms !important; transition-duration: .001ms !important; }
+  }
+  @media (max-width: 560px) {
+    .rung { grid-template-columns: 1fr; gap: 8px; }
+    .readout dd { font-size: 1.15rem; }
+    .tab { padding: 15px 14px; }
+  }
+
+  /* Print: expand every panel, drop the chrome. */
+  @media print {
+    .tablist, #trace { display: none !important; }
+    .tabpanel[hidden] { display: grid !important; }
+    .tabpanel .sr-only {
+      position: static; width: auto; height: auto; margin: 0;
+      overflow: visible; clip-path: none; white-space: normal;
+      font-size: var(--f-lg); margin-bottom: 8px;
+    }
+    .band { break-inside: avoid; }
+  }
+</style>
+
+<!-- ============ HERO ============ -->
+<header class="monitor">
+  <canvas id="trace" aria-hidden="true"></canvas>
+  <div class="wrap monitor-inner">
+    <div class="status-row">
+      <span class="chip live">Lucid Guardian</span>
+      <span class="chip">Investigational prototype</span>
+      <span class="chip">Simulated data</span>
+      <span class="chip">Seeking pilot sites</span>
+    </div>
+
+    <h1 class="hero-title">Outside the ICU, the brain is the <em>least monitored</em> organ in the hospital.</h1>
+
+    <p class="hero-sub">Lucid Guardian reads continuous EEG alongside vital signs and turns the two into one picture of a patient’s state, so deterioration between assessments surfaces while there is still time to act.</p>
+
+    <dl class="readout">
+      <div><dt>EEG channels</dt><dd class="num t-accent">4<span>10–20</span></dd></div>
+      <div><dt>Band update</dt><dd class="num">1<span>s</span></dd></div>
+      <div><dt>Vitals update</dt><dd class="num">5<span>s</span></dd></div>
+      <div><dt>NEWS2</dt><dd class="num t-warn">0–20</dd></div>
+      <div><dt>Recovery score</dt><dd class="num t-ok">0–100</dd></div>
+      <div><dt>Escalation tiers</dt><dd class="num t-crit">4</dd></div>
+    </dl>
+  </div>
+</header>
+
+<!-- ============ THE GAP ============ -->
+<section class="band">
+  <div class="wrap">
+    <div class="band-head">
+      <span class="eyebrow">The gap</span>
+      <h2>Your ward already produces this signal. Nothing reads it between rounds.</h2>
+      <p class="prose">Between <strong>2 and 3 million</strong> older adults develop delirium in hospital each year in the US, accounting for more than <strong>17.5 million inpatient days</strong>.<a class="cite" href="#ref-2" aria-label="See reference 2">2</a> Detection still depends on intermittent bedside assessment, so hypoactive delirium in a quiet patient at 03:00 goes unnoticed until the morning round. The agitated patient gets found. The one lying still does not.</p>
+      <p class="prose">We start where the evidence is strongest and the economics are clearest: <strong>the post-surgical ward</strong>. Postoperative delirium is reported in <strong>5–50%</strong> of older surgical patients depending on procedure and cohort,<a class="cite" href="#ref-1" aria-label="See reference 1">1</a> around 10% after major elective surgery and higher after cardiac and hip fracture repair.</p>
+    </div>
+
+    <div class="stats">
+      <div class="stat"><b class="num">~700,000</b><span>US patients affected by postoperative delirium per year, at an estimated <strong>&gt;$32B</strong> annual treatment cost<a class="cite" href="#ref-2" aria-label="See reference 2">2</a></span></div>
+      <div class="stat"><b class="num">&gt;$40,000</b><span>average cumulative cost per affected patient<a class="cite" href="#ref-2" aria-label="See reference 2">2</a></span></div>
+      <div class="stat"><b class="num">+7.4 days</b><span>mean incremental total length of hospital stay versus no delirium<a class="cite" href="#ref-3" aria-label="See reference 3">3</a></span></div>
+      <div class="stat"><b class="num">&gt;$4B</b><span>annual Medicare expenditure attributed to delirium in hospitalised older adults<a class="cite" href="#ref-2" aria-label="See reference 2">2</a></span></div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ SCREENSHOTS ============ -->
+<!-- ▼▼ TO ADD A SCREENSHOT: replace <div class="shot-slot">…</div> with
+     <img src="assets/dashboard.png" alt="Dashboard showing recovery score ring, brain state and vitals grid"> ▼▼ -->
+<section class="band tint">
+  <div class="wrap">
+    <div class="band-head">
+      <span class="eyebrow">The interface</span>
+      <h2>Built to be read in three seconds at the foot of a bed.</h2>
+      <p class="prose">Dark-first, high-contrast, tabular figures throughout. Severity is encoded in shape as well as colour, so the screen that needs attention reads before you parse any number.</p>
+    </div>
+
+    <div class="shots">
+      <figure class="shot">
+        <div class="shot-frame"><div class="shot-slot"><span class="eyebrow">Capture in preparation</span></div></div>
+        <figcaption><b>Dashboard</b>Recovery score ring, brain state, NEWS2 badge and vitals grid on one screen.</figcaption>
+      </figure>
+      <figure class="shot">
+        <div class="shot-frame"><div class="shot-slot"><span class="eyebrow">Capture in preparation</span></div></div>
+        <figcaption><b>Neuro detail</b>Live waveform, band power distribution, hemispheric heatmap, sleep staging.</figcaption>
+      </figure>
+      <figure class="shot">
+        <div class="shot-frame"><div class="shot-slot"><span class="eyebrow">Capture in preparation</span></div></div>
+        <figcaption><b>Vitals detail</b>Per-parameter trends with the NEWS2 contribution broken out by parameter.</figcaption>
+      </figure>
+      <figure class="shot">
+        <div class="shot-frame"><div class="shot-slot"><span class="eyebrow">Capture in preparation</span></div></div>
+        <figcaption><b>Alerts</b>Escalation history, current tier, and per-tier notification thresholds.</figcaption>
+      </figure>
+    </div>
+  </div>
+</section>
+
+<!-- ============ TABBED DETAIL ============ -->
+<section class="band">
+  <div class="wrap">
+    <div class="band-head">
+      <span class="eyebrow">The detail</span>
+      <h2>Everything a reviewer would ask next.</h2>
+      <p class="prose">Four questions we get asked in every first meeting. Pick whichever one you would have asked.</p>
+    </div>
+
+    <div class="tablist" role="tablist" aria-label="Product detail" hidden>
+      <button class="tab" role="tab" type="button" id="tab-evidence" aria-controls="panel-evidence" aria-selected="true" data-hash="evidence">Evidence</button>
+      <button class="tab" role="tab" type="button" id="tab-how" aria-controls="panel-how" aria-selected="false" data-hash="how-it-works">How it works</button>
+      <button class="tab" role="tab" type="button" id="tab-who" aria-controls="panel-who" aria-selected="false" data-hash="who-its-for">Who it is for</button>
+      <button class="tab" role="tab" type="button" id="tab-status" aria-controls="panel-status" aria-selected="false" data-hash="status">Where we are</button>
+    </div>
+
+    <!-- Evidence -->
+    <div class="tabpanel" role="tabpanel" id="panel-evidence" aria-labelledby="tab-evidence" tabindex="0">
+      <h3 class="sr-only panel-title">Evidence</h3>
+      <p class="panel-lead">Across more than thirty studies, the delirious brain shows the same pattern: <strong>relative delta power rises</strong>, <strong>alpha power falls</strong>, and the <strong>theta/alpha ratio increases</strong> as faster rhythms give way to slower ones.<a class="cite" href="#ref-4" aria-label="See reference 4">4</a> Unlike a bedside score, that change is continuous and does not need the patient awake and cooperative.</p>
+      <div class="cards">
+        <div class="card">
+          <span class="eyebrow">Upper bound</span>
+          <h3>100% sensitivity, 96% specificity</h3>
+          <p>Van der Kooi et al. measured relative delta power at a single frontal–parietal derivation (F8–Pz), reaching AUC 0.99.<a class="cite" href="#ref-5" aria-label="See reference 5">5</a> The sample was small: 56 patients, 28 with delirium against 28 matched controls.</p>
+        </div>
+        <div class="card">
+          <span class="eyebrow">Conservative bound</span>
+          <h3>AUROC 0.75 (95% CI 0.69–0.82)</h3>
+          <p>Numan et al. tested the same measure prospectively across several Dutch centres in 159 postoperative patients aged 60 and over.<a class="cite" href="#ref-6" aria-label="See reference 6">6</a> A small matched sample flatters any classifier, so this is the figure we plan against.</p>
+        </div>
+        <div class="card">
+          <span class="eyebrow">Our position</span>
+          <h3>Screening, not diagnosing</h3>
+          <p>Lucid Guardian raises the question earlier and routes it to a human. Diagnosis stays a clinical judgement made at the bedside, by your team.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- How it works -->
+    <div class="tabpanel" role="tabpanel" id="panel-how" aria-labelledby="tab-how" tabindex="0">
+      <h3 class="sr-only panel-title">How it works</h3>
+      <p class="panel-lead">Neither stream is sufficient alone. NEWS2 catches physiological deterioration but is blind to cognition. EEG catches cortical slowing but says nothing about sepsis or haemorrhage. Lucid Guardian scores both and fuses them.</p>
+      <div class="cards">
+        <div class="card">
+          <span class="eyebrow">Neuro stream</span>
+          <h3>Continuous EEG band power</h3>
+          <p>Four channels at standard 10–20 positions, decomposed into five frequency bands every second, then classified into a discrete brain state.</p>
+          <ul class="spec">
+            <li>Channels — O1, O2, T3, T4</li>
+            <li>Bands — δ 0.5–4 · θ 4–8 · α 8–13 · β 13–30 · γ 30–100 Hz</li>
+            <li>States — alert · relaxed · drowsy · sleeping · confused · distressed</li>
+          </ul>
+        </div>
+        <div class="card">
+          <span class="eyebrow">Physiological stream</span>
+          <h3>NEWS2, computed continuously</h3>
+          <p>The early warning score your wards already read, recalculated every five seconds instead of every four hours, with the per-parameter breakdown kept intact.</p>
+          <ul class="spec">
+            <li>HR · SpO₂ · temperature · respiratory rate</li>
+            <li>Systolic / diastolic BP · HRV (SDNN)</li>
+            <li>Five of seven NEWS2 parameters implemented today</li>
+          </ul>
+        </div>
+        <div class="card">
+          <span class="eyebrow">Fusion</span>
+          <h3>Composite recovery score</h3>
+          <p>A single 0–100 figure combining physiology, cortical state, day-over-day trajectory and patient-reported check-ins, designed to be glanceable at handover.</p>
+          <ul class="spec">
+            <li>Vitals component — NEWS2-weighted</li>
+            <li>Brain component — band ratios, hemispheric symmetry</li>
+            <li>Trajectory — deviation from expected recovery day</li>
+            <li>Engagement — symptom check-in adherence</li>
+          </ul>
+        </div>
+      </div>
+
+      <p class="panel-lead">Most monitoring programmes die of alert fatigue. Nothing reaches a clinician until it has survived two quieter tiers, and transient states are held against a sustained-duration threshold instead of firing on one sample.</p>
+      <div class="ladder">
+        <div class="rung r0">
+          <span class="rung-id">L0</span>
+          <div><h3>Patient</h3><p>In-app prompt only. Covers self-resolving states such as brief restlessness or a single out-of-range reading. Never leaves the device.</p></div>
+        </div>
+        <div class="rung r1">
+          <span class="rung-id">L1</span>
+          <div><h3>Caregiver</h3><p>Push notification to the nominated family member or carer. Used for sustained but non-urgent change, and for missed check-ins.</p></div>
+        </div>
+        <div class="rung r2">
+          <span class="rung-id">L2</span>
+          <div><h3>Clinician</h3><p>Dashboard alert to the care team. Requires a sustained qualifying state: a confused classification held past the duration threshold, or a NEWS2 trigger.</p></div>
+        </div>
+        <div class="rung r3">
+          <span class="rung-id">L3</span>
+          <div><h3>Emergency</h3><p>All contacts plus emergency services, with GPS location attached. Also reachable through a press-and-hold control that cannot fire by accident.</p></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Who it is for -->
+    <div class="tabpanel" role="tabpanel" id="panel-who" aria-labelledby="tab-who" tabindex="0">
+      <h3 class="sr-only panel-title">Who it is for</h3>
+      <p class="panel-lead">The problem is the same in each: a patient whose state can change without anyone noticing, on a ward where assessment is intermittent. What differs is the evidence behind each population, so we sequence them rather than claiming all three at once.</p>
+      <div class="segs">
+        <div class="seg s-now">
+          <div class="seg-head"><h3>Post-surgical wards</h3><span class="tag built">Pilot now</span></div>
+          <p>We start here. The published EEG evidence is strongest, the at-risk window is well defined, and length of stay and cost per case are both measurable inside one admission.</p>
+        </div>
+        <div class="seg s-next">
+          <div class="seg-head"><h3>Older adults</h3><span class="tag sim">Next</span></div>
+          <p>Delirium in hospitalised older adults extends well beyond surgery, and hypoactive presentations are the ones most often missed. The same instrument applies. The open problem is dementia, where telling baseline cognitive impairment apart from acute change is hard.</p>
+        </div>
+        <div class="seg s-exp">
+          <div class="seg-head"><h3>Mental health units</h3><span class="tag next">Exploratory</span></div>
+          <p>Sleep architecture and cortical state are plausible early indicators of relapse, and the same hardware already captures both. We hold this as a hypothesis. We have not sourced evidence for it, and we would not pitch it as validated.</p>
+        </div>
+      </div>
+      <div class="principle">
+        <span class="eyebrow">Design principle</span>
+        <h3>Patient-held by default.</h3>
+        <p>The patient sees their own signal first and controls who else receives it. We treat this as a clinical requirement. Monitoring that a person cannot see or influence is surveillance, and in a mental health setting it damages the therapeutic relationship faster than it detects anything. Every escalation tier above the patient stays visible to the patient.</p>
+      </div>
+    </div>
+
+    <!-- Where we are -->
+    <div class="tabpanel" role="tabpanel" id="panel-status" aria-labelledby="tab-status" tabindex="0">
+      <h3 class="sr-only panel-title">Where we are</h3>
+      <p class="panel-lead">Every data source sits behind a provider interface, so moving from simulation to hardware swaps an implementation rather than rewriting the app. We would rather show you this table than have you find it in month two of a pilot.</p>
+      <div class="table-scroll">
+        <table>
+          <caption class="sr-only">Build status of each component, showing what is implemented, what runs on simulated data, and what remains on the roadmap.</caption>
+          <thead>
+            <tr><th scope="col">Component</th><th scope="col">Status</th><th scope="col">Detail</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>NEWS2 scoring</td><td><span class="tag sim">Partial</span></td><td>Five of the seven parameters scored against standard thresholds. Consciousness (ACVPU) and the air-or-oxygen parameter are not yet implemented, and the single-parameter escalation rule is still outstanding.</td></tr>
+            <tr><td>Brain state classification</td><td><span class="tag built">Built</span></td><td>Six states derived from band-power ratios across the four channels.</td></tr>
+            <tr><td>Alert engine &amp; escalation</td><td><span class="tag built">Built</span></td><td>Four-tier state machine with sustained-duration gating and haptic confirmation.</td></tr>
+            <tr><td>Recovery score</td><td><span class="tag built">Built</span></td><td>Four weighted components across physiology, cortex, trajectory and engagement.</td></tr>
+            <tr><td>EEG &amp; vitals data</td><td><span class="tag sim">Simulated</span></td><td>Five clinically-shaped scenarios: normal recovery, delirium onset, pain spike, sleep recovery, deterioration. Playback at 1×–10×.</td></tr>
+            <tr><td>EEG hardware</td><td><span class="tag next">Interface ready</span></td><td>BrainBit headband provider stubbed behind the same interface as the simulator.</td></tr>
+            <tr><td>Vitals hardware</td><td><span class="tag next">Interface ready</span></td><td>Health Connect provider stubbed for smartwatch and wearable ingest.</td></tr>
+            <tr><td>Clinical validation</td><td><span class="tag next">Not started</span></td><td>This is what a pilot is for. No prospective data has been collected in any population.</td></tr>
+            <tr><td>Older adult &amp; mental health use</td><td><span class="tag next">Roadmap</span></td><td>The instrument generalises. The evidence base does not yet. Post-surgical first, then geriatric, then psychiatric, and only with data behind each step.</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ CTA ============ -->
+<section class="band tint">
+  <div class="wrap cta">
+    <span class="eyebrow">The ask</span>
+    <h2>We are looking for one ward willing to test a hypothesis.</h2>
+    <p>We are not asking you to buy anything. We want a short observational pilot on a post-surgical unit, running alongside your existing assessment protocol, with your team judging whether the neuro stream surfaces anything the four-hourly round missed.</p>
+    <ul class="ask">
+      <li>An observational deployment on a defined post-surgical cohort, with no change to standard care</li>
+      <li>Continuous EEG plus vitals capture, scored against your existing delirium assessment as ground truth</li>
+      <li>A shared read of where the model agreed, where it disagreed, and where it produced noise</li>
+      <li>Full access to the raw data and the scoring logic. No part of the algorithm is hidden from you</li>
+      <li>If you run a geriatric or mental health unit, we would still like the conversation. You would be shaping what comes after the first cohort rather than buying it</li>
+    </ul>
+    <a class="btn" href="mailto:shenaldbr@gmail.com?subject=Lucid%20Guardian%20pilot%20enquiry">Arrange a pilot conversation</a>
+  </div>
+</section>
+
+<!-- ============ REFERENCES ============ -->
+<section class="band">
+  <div class="wrap">
+    <div class="band-head">
+      <span class="eyebrow">References</span>
+      <h2>Sources cited above.</h2>
+    </div>
+    <ol class="refs">
+      <li id="ref-1">Incidence and risk factors of postoperative delirium in elderly surgical patients. <a href="https://www.nature.com/articles/s41598-024-84554-2"><em>Scientific Reports</em> (2024)</a>. Range also summarised in Miller et al., postoperative delirium in older adults: a surgeon’s guide and clinical practice review.</li>
+      <li id="ref-2">Postoperative delirium cost and burden estimates, summarised in <a href="https://vats.amegroups.org/article/view/7340/html">Miller et al., <em>Video-Assisted Thoracic Surgery</em></a>.</li>
+      <li id="ref-3"><a href="https://pubmed.ncbi.nlm.nih.gov/25995494/">Health economic implications of perioperative delirium in older patients after surgery for a fragility hip fracture</a>. PubMed.</li>
+      <li id="ref-4"><a href="https://www.nysora.com/education-news/eeg-in-predicting-and-diagnosing-postoperative-delirium/">EEG in predicting and diagnosing postoperative delirium</a>. NYSORA review of more than 30 studies.</li>
+      <li id="ref-5">van der Kooi AW, Zaal IJ, Klijn FA, Koek HL, Meijer RC, Leijten FS, Slooter AJC. <a href="https://pubmed.ncbi.nlm.nih.gov/25166725/">Delirium detection using EEG: what and how to measure</a>. <em>Chest</em> 2015;147(1):94–101. doi:10.1378/chest.13-3050. Matched case-control, 56 patients.</li>
+      <li id="ref-6">Numan T, van den Boogaard M, Kamper AM, Rood PJT, Peelen LM, Slooter AJC; Dutch Delirium Detection Study Group. <a href="https://pubmed.ncbi.nlm.nih.gov/30579407/">Delirium detection using relative delta power based on 1-minute single-channel EEG: a multicentre study</a>. <em>British Journal of Anaesthesia</em> 2019;122(1):60–68. doi:10.1016/j.bja.2018.08.021. Prospective multicentre, 159 patients.</li>
+    </ol>
+  </div>
+</section>
+
+<footer class="wrap legal">
+  <p><strong>Regulatory status.</strong> Lucid Guardian is an investigational research prototype. It is not a medical device, has not been cleared or approved by any regulatory authority, and must not be used to make clinical decisions or to replace established monitoring and assessment protocols.</p>
+  <p><strong>Data shown.</strong> All figures, waveforms and patient details in this document and in the application are simulated. No patient data has been collected or processed.</p>
+  <p><strong>Scope of claims.</strong> The published evidence cited here relates to postoperative delirium. Application to older adults outside surgery, and to mental health settings, is stated as roadmap and hypothesis rather than validated capability.</p>
+  <p class="num">Lucid Guardian · Investigational prototype · 2026</p>
+</footer>
+
+<script>
+/* ---- Tabs: progressive enhancement. Without JS every panel stays open. ---- */
+(function () {
+  var list = document.querySelector('[role="tablist"]');
+  if (!list) return;
+  var tabs = Array.prototype.slice.call(list.querySelectorAll('[role="tab"]'));
+  if (!tabs.length) return;
+
+  var panels = tabs.map(function (t) {
+    return document.getElementById(t.getAttribute('aria-controls'));
+  });
+
+  function select(i, moveFocus, updateHash) {
+    tabs.forEach(function (tab, n) {
+      var on = n === i;
+      tab.setAttribute('aria-selected', on ? 'true' : 'false');
+      tab.tabIndex = on ? 0 : -1;
+      if (panels[n]) panels[n].hidden = !on;
+    });
+    if (moveFocus) tabs[i].focus();
+    if (updateHash && window.history && history.replaceState) {
+      history.replaceState(null, '', '#' + tabs[i].dataset.hash);
+    }
+  }
+
+  tabs.forEach(function (tab, i) {
+    tab.addEventListener('click', function () { select(i, false, true); });
+    tab.addEventListener('keydown', function (e) {
+      var next = null;
+      if (e.key === 'ArrowRight') next = (i + 1) % tabs.length;
+      else if (e.key === 'ArrowLeft') next = (i - 1 + tabs.length) % tabs.length;
+      else if (e.key === 'Home') next = 0;
+      else if (e.key === 'End') next = tabs.length - 1;
+      if (next !== null) { e.preventDefault(); select(next, true, true); }
+    });
+  });
+
+  // Deep link: #evidence, #how-it-works, #who-its-for, #status.
+  // Any other hash (a citation, say) is left alone.
+  var start = 0;
+  var hash = (window.location.hash || '').replace('#', '');
+  tabs.forEach(function (tab, n) { if (tab.dataset.hash === hash) start = n; });
+
+  list.hidden = false;
+  select(start, false, false);
+})();
+
+/* ---- Ambient EEG trace behind the hero ---- */
+(function () {
+  var canvas = document.getElementById('trace');
+  if (!canvas) return;
+  var ctx = canvas.getContext('2d');
+
+  var motionQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
+  var reduced = motionQuery.matches;
+  var onScreen = true;
+
+  var CHANNELS = ['--trace-a', '--trace-b', '--trace-c', '--trace-d'];
+  var w = 0, h = 0, t = 0, raf = null;
+
+  function colors() {
+    var cs = getComputedStyle(document.documentElement);
+    return CHANNELS.map(function (v) { return cs.getPropertyValue(v).trim() || '#00D4AA'; });
+  }
+  var strokes = colors();
+
+  function resize() {
+    var dpr = Math.min(window.devicePixelRatio || 1, 2);
+    var rect = canvas.getBoundingClientRect();
+    w = rect.width; h = rect.height;
+    canvas.width = Math.round(w * dpr);
+    canvas.height = Math.round(h * dpr);
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    strokes = colors();
+  }
+
+  // Pseudo-EEG: summed sines across delta/theta/alpha/beta with per-channel phase offset.
+  function amplitude(x, lane, time) {
+    var p = lane * 1.7;
+    return (
+      Math.sin(x * 0.011 + time * 0.8 + p) * 15 +
+      Math.sin(x * 0.027 + time * 1.5 + p * 1.3) * 8 +
+      Math.sin(x * 0.061 + time * 2.4 + p * 0.7) * 4.5 +
+      Math.sin(x * 0.134 + time * 3.6 + p * 2.1) * 2
+    );
+  }
+
+  function draw() {
+    ctx.clearRect(0, 0, w, h);
+    var lanes = CHANNELS.length;
+    var laneH = h / lanes;
+    for (var i = 0; i < lanes; i++) {
+      var mid = laneH * i + laneH / 2;
+      ctx.beginPath();
+      ctx.strokeStyle = strokes[i];
+      ctx.lineWidth = 1.25;
+      ctx.globalAlpha = 0.85 - i * 0.11;
+      for (var x = 0; x <= w; x += 2) {
+        var y = mid + amplitude(x, i, t) * (laneH / 90);
+        if (x === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
+      }
+      ctx.stroke();
+    }
+    ctx.globalAlpha = 1;
+  }
+
+  function loop() { t += 0.016; draw(); raf = requestAnimationFrame(loop); }
+  function stop() { if (raf) { cancelAnimationFrame(raf); raf = null; } }
+
+  function sync() {
+    var shouldRun = onScreen && !reduced && !document.hidden;
+    if (shouldRun && !raf) raf = requestAnimationFrame(loop);
+    if (!shouldRun) stop();
+  }
+
+  resize();
+  draw();
+
+  window.addEventListener('resize', function () { resize(); draw(); });
+  document.addEventListener('visibilitychange', sync);
+
+  if (typeof motionQuery.addEventListener === 'function') {
+    motionQuery.addEventListener('change', function (e) {
+      reduced = e.matches; sync(); if (reduced) draw();
+    });
+  }
+
+  if ('IntersectionObserver' in window) {
+    new IntersectionObserver(function (entries) {
+      onScreen = entries[0].isIntersecting; sync();
+    }, { threshold: 0 }).observe(canvas);
+  }
+
+  new MutationObserver(function () { strokes = colors(); draw(); })
+    .observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
+
+  sync();
+})();
+</script>
+
+</body>
+</html>
