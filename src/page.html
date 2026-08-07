@@ -1011,7 +1011,12 @@
       origin.classList.remove('is-open');
       origin.focus();
     }
+    // The close animations use fill:'forwards' to hold their end state until the
+    // dialog actually closes. Both must be cancelled, or the dialog stays stuck at
+    // opacity 0 and the next open renders into an invisible element.
     lbImg.getAnimations().forEach(function (a) { a.cancel(); });
+    dialog.getAnimations().forEach(function (a) { a.cancel(); });
+    lbImg.style.visibility = '';
     busy = false;
   }
 
