@@ -47,14 +47,22 @@ Two more sit under the escalation ladder in the "How it works" tab:
 
 | File | Screen |
 |---|---|
-| `assets/sos-hold.jpg`     | The emergency control mid press-and-hold |
-| `assets/sos-location.jpg` | Dispatched state with GPS location attached |
+| `assets/sos-sent.jpg`     | Emergency dispatched: snapshot and contacts notified |
+| `assets/sos-whatsapp.jpg` | The alert message a nominated caregiver receives |
 
 No markup change needed. Until a file exists the frame shows a placeholder, and it swaps to the
 real image as soon as the file is committed. Alt text is already written for each one.
 
 Frames are `654 / 1280` to match a default phone capture exactly, so nothing is cropped. Keep
-new captures at that size. Filenames must be lowercase: GitHub Pages serves case-sensitively.
+new captures at that size. `sos-whatsapp.jpg` is the exception: it uses a landscape frame at
+`1080 / 797`.
+
+Filenames must be lowercase with no spaces — GitHub Pages serves case-sensitively, and spaces
+have to be percent-encoded in URLs.
+
+**Never publish a capture containing real GPS coordinates.** The app reads live device location
+via `expo-location`, so any emergency capture will embed wherever you actually were. Use a
+spoofed location before capturing.
 
 ## Contact form
 

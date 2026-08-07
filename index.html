@@ -312,8 +312,12 @@
   /* ---------- screenshots ---------- */
   .shots { display: flex; flex-wrap: wrap; justify-content: center; gap: 22px; }
   .shot { flex: 1 1 160px; max-width: 240px; display: grid; gap: 10px; margin: 0; }
-  .shots.pair { justify-content: flex-start; }
+  .shots.pair { justify-content: flex-start; align-items: center; }
   .shots.pair .shot { flex: 0 1 232px; max-width: 252px; }
+  .shots.pair .shot.wide { flex: 1 1 320px; max-width: 430px; }
+  .shots.pair .shot.wide .shot-frame { aspect-ratio: 1080 / 797; border-radius: var(--r-card); padding: 6px; }
+  .shots.pair .shot.wide .shot-frame img { border-radius: 8px; }
+  .shots.pair .shot.wide .shot-slot { border-radius: 8px; }
   .shot-frame {
     aspect-ratio: 654 / 1280; border-radius: 22px; border: 1px solid var(--line);
     background: var(--ground); padding: 7px; box-shadow: var(--shadow); overflow: hidden;
@@ -657,21 +661,21 @@
         </div>
       </div>
 
-      <p class="panel-lead">The top rung is the one people ask to see. The control needs two seconds of deliberate contact, so a sleeve or a dropped handset does nothing. When it does fire, the patient’s location goes out with it and nobody has to describe where they are.</p>
+      <p class="panel-lead">The top rung is the one people ask to see. The control takes two seconds of deliberate contact, so a sleeve or a dropped handset does nothing. What goes out is more than a call for help: the alert carries the patient’s vitals, NEWS2, brain state and location, so whoever answers already knows what they are walking into. The patient can stand it down with one tap.</p>
       <div class="shots pair">
         <figure class="shot">
           <div class="shot-frame">
-            <img src="assets/sos-hold.jpg" width="654" height="1280" loading="lazy" decoding="async"
-                 alt="The emergency control mid-activation, showing the press-and-hold countdown before the alert is sent.">
+            <img src="assets/sos-sent.jpg" width="654" height="1280" loading="lazy" decoding="async"
+                 alt="The emergency screen after dispatch, confirming two contacts notified and listing the snapshot sent with the alert: heart rate, oxygen saturation, blood pressure, NEWS2, brain state and captured location. A stand-down control sits at the foot of the screen.">
           </div>
-          <figcaption><b>Press and hold</b>Two seconds of deliberate contact. A brush against the screen does nothing.</figcaption>
+          <figcaption><b>Dispatched</b>Contacts notified, with the vitals snapshot attached and a one-tap stand-down.</figcaption>
         </figure>
-        <figure class="shot">
+        <figure class="shot wide">
           <div class="shot-frame">
-            <img src="assets/sos-location.jpg" width="654" height="1280" loading="lazy" decoding="async"
-                 alt="The dispatched emergency state, showing the patient’s GPS location attached to the alert and the contacts it has reached.">
+            <img src="assets/sos-whatsapp.jpg" width="1080" height="797" loading="lazy" decoding="async"
+                 alt="The message a nominated caregiver receives: patient name, heart rate, oxygen saturation, blood pressure, NEWS2 score, brain state, a map link to the patient’s location, and a request to check in.">
           </div>
-          <figcaption><b>Dispatched with location</b>Every contact tier at once, with GPS coordinates attached.</figcaption>
+          <figcaption><b>What the caregiver receives</b>The same snapshot as a plain message, with a map link.</figcaption>
         </figure>
       </div>
     </div>
