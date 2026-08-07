@@ -1017,6 +1017,7 @@
         { transform: 'none' }
       ], { duration: duration(), easing: EASE });
       anim.finished.catch(function () {}).then(function () { busy = false; });
+      setTimeout(function () { busy = false; }, duration() + 150);
     }
     requestAnimationFrame(play);
     // rAF is suspended while a tab is hidden. Without this the image would stay
@@ -1025,7 +1026,10 @@
   }
 
   function close() {
-    if (busy || !dialog.open) return;
+    if (!dialog.open) return;
+    // Deliberately not gated on `busy`: an open transition that never settles
+    // must not be able to trap someone inside the dialog.
+    lbImg.getAnimations().forEach(function (a) { a.cancel(); });
     busy = true;
     var thumb = origin && origin.querySelector('img');
     if (!thumb) { finish(); return; }
