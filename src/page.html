@@ -267,7 +267,9 @@
   .shots.pair { justify-content: flex-start; align-items: center; }
   .shots.pair .shot { flex: 0 1 232px; max-width: 252px; }
   .shots.pair .shot.wide { flex: 1 1 320px; max-width: 430px; }
-  .shots.pair .shot.wide .shot-frame { aspect-ratio: 1080 / 797; border-radius: var(--r-card); padding: 6px; }
+  .shots.pair .shot.wide .shot-frame { aspect-ratio: 587 / 440; border-radius: var(--r-card); padding: 6px; }
+  /* contain, not cover: cropping a message screenshot would cut off text */
+  .shots.pair .shot.wide .shot-frame img { object-fit: contain; }
   .shots.pair .shot.wide .shot-frame img { border-radius: 8px; }
   .shots.pair .shot.wide .shot-slot { border-radius: 8px; }
   .shot-frame {
@@ -684,8 +686,8 @@
         </figure>
         <figure class="shot wide">
           <div class="shot-frame">
-            <img src="assets/sos-whatsapp.jpg" width="1080" height="797" decoding="async"
-                 alt="The message a nominated caregiver receives: patient name, heart rate, oxygen saturation, blood pressure, NEWS2 score, brain state, a map link to the patient’s location, and a request to check in.">
+            <img src="assets/sos-whatsapp.jpg" width="587" height="440" decoding="async"
+                 alt="The alert as it arrives on a nominated caregiver’s phone: patient name, heart rate, oxygen saturation, blood pressure, NEWS2 score, brain state, a map link to the patient’s location, and a request to check in.">
           </div>
           <figcaption><b>What the caregiver receives</b>The same snapshot as a plain message, with a map link.</figcaption>
         </figure>
